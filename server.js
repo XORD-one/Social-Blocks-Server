@@ -39,7 +39,7 @@ mongoose
     console.log(error);
   });
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   res.send("server live!");
 });
 

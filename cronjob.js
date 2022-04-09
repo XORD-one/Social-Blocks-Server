@@ -1,18 +1,28 @@
-const schedule = require('node-schedule');
-const axios = require('axios');
-const Post = require('./models/post');
-const User = require('./models/user');
+const schedule = require("node-schedule");
+const axios = require("axios");
+const Post = require("./models/post");
+const User = require("./models/user");
 
-const thirtySeconds = '*/30 * * * * *';
+const thirtySeconds = "*/30 * * * * *";
+
+function isValidUrl(string) {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+}
 
 schedule.scheduleJob(thirtySeconds, async () => {
   try {
     const postsToSkip = await Post.count({});
 
-    console.log('postsToSkip -', postsToSkip);
+    console.log("postsToSkip -", postsToSkip);
 
     const result = await axios.post(
-      'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby',
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby",
       {
         query: `
       {
@@ -41,14 +51,20 @@ schedule.scheduleJob(thirtySeconds, async () => {
         }
       }
       `,
-      },
+      }
     );
 
-    console.log('posts -', result.data?.data?.posts?.length);
+    console.log("posts -", result.data?.data?.posts?.length);
 
     if (result.data?.data?.posts?.length) {
-      const postsIpfsData = result.data.data.posts.map(post => {
-        return axios.get(post.uri);
+      const postsIpfsData = result.data.data.posts.map((post) => {
+        try {
+          if (isValidUrl(post.uri)) {
+            return axios.get(post.uri);
+          }
+        } catch (e) {
+          console.log(e);
+        }
       });
 
       const postsIpfsDataResult = await Promise.all(postsIpfsData);
@@ -56,7 +72,12 @@ schedule.scheduleJob(thirtySeconds, async () => {
       const postsData = postsIpfsDataResult.map((post, index) => {
         const additionalData = result.data.data.posts[index];
         const postData = {
-          ...post.data,
+          // ...post.data,
+          name: post ? post?.data?.name : "No title found.",
+          description: post ? post?.data?.description : "No description found.",
+          image: post
+            ? post?.data?.image
+            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPWpghrN2QQSWSoRBzdktDUR3EyMqJIvMI2g&usqp=CAU",
           sellValue: Number(additionalData.sellValue),
           owner: additionalData.owner,
           creator: additionalData.creator,
@@ -70,17 +91,17 @@ schedule.scheduleJob(thirtySeconds, async () => {
 
       await Promise.all(postsData);
 
-      console.log('done');
+      console.log("done");
     }
   } catch (error) {
-    console.log('rttpt', error);
+    console.log("rttpt", error);
   }
 });
 
 schedule.scheduleJob(thirtySeconds, async () => {
   try {
     const result = await axios.post(
-      'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby',
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby",
       {
         query: `
           { 
@@ -104,11 +125,11 @@ schedule.scheduleJob(thirtySeconds, async () => {
             }
           }
       `,
-      },
+      }
     );
 
     if (result.data?.data?.posts?.length) {
-      const updatedPostData = result.data?.data?.posts.map(post => {
+      const updatedPostData = result.data?.data?.posts.map((post) => {
         return Post.findOneAndUpdate(
           { _id: String(parseInt(post.postId)) },
           {
@@ -116,15 +137,15 @@ schedule.scheduleJob(thirtySeconds, async () => {
             owner: post.owner.id,
             transferHistory: post.transferHistory,
             buyStatus: post.buyStatus,
-          },
+          }
         );
       });
 
       await Promise.all(updatedPostData);
-      console.log('done');
+      console.log("done");
     }
   } catch (error) {
-    console.log('rttpt', error);
+    console.log("rttpt", error);
   }
 });
 
@@ -133,7 +154,7 @@ schedule.scheduleJob(thirtySeconds, async () => {
     const usersToSkip = await User.count({});
 
     const result = await axios.post(
-      'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby',
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby",
       {
         query: `
           {
@@ -155,21 +176,21 @@ schedule.scheduleJob(thirtySeconds, async () => {
             }
           }
       `,
-      },
+      }
     );
 
-    console.log('users -', result.data?.data?.users?.length);
+    console.log("users -", result.data?.data?.users?.length);
 
     if (result.data?.data?.users?.length) {
-      const usersData = result.data?.data?.users.map(user => {
+      const usersData = result.data?.data?.users.map((user) => {
         return new User(user).save();
       });
 
       await Promise.all(usersData);
 
-      console.log('done');
+      console.log("done");
     }
   } catch (error) {
-    console.log('rttpt', error);
+    console.log("rttpt", error);
   }
 });
