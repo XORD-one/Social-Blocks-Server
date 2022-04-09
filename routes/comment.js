@@ -6,7 +6,7 @@ const { verifySignature } = require("../middlewares");
 const router = express.Router();
 
 router.post("/setcomment", verifySignature, CommentController.setComment);
-router.post("/getComments", CommentController.getComments);
+router.get("/getcomments/:id", CommentController.getComments);
 
 module.exports = {
   router: router,

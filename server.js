@@ -7,6 +7,7 @@ const auth_route = require("./routes/auth");
 const likes_route = require("./routes/likes");
 const post_route = require("./routes/post");
 const user_route = require("./routes/user");
+const comment_route = require("./routes/comment");
 
 const cors = require("cors");
 const Post = require("./models/post");
@@ -46,4 +47,4 @@ app.use("/auth", auth_route.router);
 app.use("/likes", likes_route.router);
 app.use("/posts", post_route.router);
 app.use("/users", user_route.router);
-app.use("/comment", user_route.router);
+app.use("/comment", comment_route.router);

@@ -3,6 +3,7 @@ const Post = require("../models/post");
 
 const setComment = async (req, res) => {
   let post = await Post.findOne({ _id: req.body.postId });
+
   if (post) {
     let comment = new Comment({
       postId: req.body.postId,
@@ -23,7 +24,7 @@ const setComment = async (req, res) => {
 
 const getComments = async (req, res) => {
   let comments = await Comment.find({
-    postId: req.body.postId,
+    postId: req.params.id,
   });
   if (comments) {
     res.json({
