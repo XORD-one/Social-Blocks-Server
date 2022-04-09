@@ -183,7 +183,12 @@ schedule.scheduleJob(thirtySeconds, async () => {
 
     if (result.data?.data?.users?.length) {
       const usersData = result.data?.data?.users.map((user) => {
-        return new User(user).save();
+        return new User({
+          ...user,
+          image: isValidUrl(user.image)
+            ? user.image
+            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT20YeqIGynCySode9lQujELSMDL2l9KQ1Q-PFvguIxKnVvpxc-cvOTtu9YRNAmBpCvkJ8&usqp=CAU",
+        }).save();
       });
 
       await Promise.all(usersData);
