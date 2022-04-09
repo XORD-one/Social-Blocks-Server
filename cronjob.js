@@ -79,8 +79,18 @@ schedule.scheduleJob(thirtySeconds, async () => {
             ? post?.data?.image
             : "https://durangomerchantservices.com/wp-content/uploads/2021/08/Invalid-Merchant-ID-What-To-DO-Merchant-Services-4000x2666.jpeg",
           sellValue: Number(additionalData.sellValue),
-          owner: additionalData.owner,
-          creator: additionalData.creator,
+          owner: {
+            ...additionalData.owner,
+            image: isValidUrl(additionalData.owner.image)
+              ? additionalData.owner.image
+              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT20YeqIGynCySode9lQujELSMDL2l9KQ1Q-PFvguIxKnVvpxc-cvOTtu9YRNAmBpCvkJ8&usqp=CAU",
+          },
+          creator: {
+            ...additionalData.creator,
+            image: isValidUrl(additionalData.creator.image)
+              ? additionalData.creator.image
+              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT20YeqIGynCySode9lQujELSMDL2l9KQ1Q-PFvguIxKnVvpxc-cvOTtu9YRNAmBpCvkJ8&usqp=CAU",
+          },
           _id: parseInt(additionalData.id),
           transferHistory: additionalData.transferHistory,
           buyStatus: additionalData.buyStatus,
