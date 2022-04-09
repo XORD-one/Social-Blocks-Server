@@ -77,7 +77,7 @@ schedule.scheduleJob(thirtySeconds, async () => {
           description: post ? post?.data?.description : "No description found.",
           image: post
             ? post?.data?.image
-            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPWpghrN2QQSWSoRBzdktDUR3EyMqJIvMI2g&usqp=CAU",
+            : "https://durangomerchantservices.com/wp-content/uploads/2021/08/Invalid-Merchant-ID-What-To-DO-Merchant-Services-4000x2666.jpeg",
           sellValue: Number(additionalData.sellValue),
           owner: additionalData.owner,
           creator: additionalData.creator,
