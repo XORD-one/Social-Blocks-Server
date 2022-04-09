@@ -1,0 +1,32 @@
+GET http://localhost:5000/posts/getPosts
+
+###
+
+GET http://localhost:5000/posts/getUserPosts?address=0xbf95c8c31feda5585381e1f62313d68a65cab0ff&type=creator
+
+
+### 
+
+GET http://localhost:5000/users/getAllUsers
+
+###
+
+GET https://rocky-peak-62606.herokuapp.com/users/getAllUsers
+
+###
+GET http://localhost:5000/users/details?address=0xbf95c8c31feda5585381e1f62313d68a65cab0ff
+
+###
+
+POST http://localhost:5000/users/follow
+Content-Type: application/json
+
+{
+    "signature": "",
+    "userAddress": "",
+    "userId": ""
+}
+
+###
+
+GET http://localhost:5000/posts/getSinglePost/2
