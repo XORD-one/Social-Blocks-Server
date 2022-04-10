@@ -2,6 +2,8 @@ const schedule = require("node-schedule");
 const axios = require("axios");
 const Post = require("./models/post");
 const User = require("./models/user");
+const PostChanges = require("./models/PostChages");
+const UserChanges = require("./models/UserChanges");
 
 const thirtySeconds = "*/30 * * * * *";
 
@@ -9,7 +11,7 @@ function isValidUrl(string) {
   let url;
   try {
     url = new URL(string);
-  } catch (_) {
+  } catch (e) {
     return false;
   }
   return url.protocol === "http:" || url.protocol === "https:";
@@ -22,7 +24,7 @@ schedule.scheduleJob(thirtySeconds, async () => {
     console.log("postsToSkip -", postsToSkip);
 
     const result = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby",
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-subgraph",
       {
         query: `
       {
@@ -75,21 +77,19 @@ schedule.scheduleJob(thirtySeconds, async () => {
           // ...post.data,
           name: post ? post?.data?.name : "No title found.",
           description: post ? post?.data?.description : "No description found.",
-          image: post
-            ? post?.data?.image
-            : "https://durangomerchantservices.com/wp-content/uploads/2021/08/Invalid-Merchant-ID-What-To-DO-Merchant-Services-4000x2666.jpeg",
+          image: post ? post?.data?.image : "",
           sellValue: Number(additionalData.sellValue),
           owner: {
             ...additionalData.owner,
             image: isValidUrl(additionalData.owner.image)
               ? additionalData.owner.image
-              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT20YeqIGynCySode9lQujELSMDL2l9KQ1Q-PFvguIxKnVvpxc-cvOTtu9YRNAmBpCvkJ8&usqp=CAU",
+              : "",
           },
           creator: {
             ...additionalData.creator,
             image: isValidUrl(additionalData.creator.image)
               ? additionalData.creator.image
-              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT20YeqIGynCySode9lQujELSMDL2l9KQ1Q-PFvguIxKnVvpxc-cvOTtu9YRNAmBpCvkJ8&usqp=CAU",
+              : "",
           },
           _id: parseInt(additionalData.id),
           transferHistory: additionalData.transferHistory,
@@ -111,7 +111,7 @@ schedule.scheduleJob(thirtySeconds, async () => {
 schedule.scheduleJob(thirtySeconds, async () => {
   try {
     const result = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby",
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-subgraph",
       {
         query: `
           { 
@@ -163,8 +163,10 @@ schedule.scheduleJob(thirtySeconds, async () => {
   try {
     const usersToSkip = await User.count({});
 
+    console.log("usersToSkip -", usersToSkip);
+
     const result = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-rinkeby",
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-subgraph",
       {
         query: `
           {
@@ -195,15 +197,66 @@ schedule.scheduleJob(thirtySeconds, async () => {
       const usersData = result.data?.data?.users.map((user) => {
         return new User({
           ...user,
-          image: isValidUrl(user.image)
-            ? user.image
-            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT20YeqIGynCySode9lQujELSMDL2l9KQ1Q-PFvguIxKnVvpxc-cvOTtu9YRNAmBpCvkJ8&usqp=CAU",
+          image: isValidUrl(user.image) ? user.image : "",
         }).save();
       });
 
       await Promise.all(usersData);
 
       console.log("done");
+    }
+  } catch (error) {
+    console.log("rttpt", error);
+  }
+});
+
+schedule.scheduleJob(thirtySeconds, async () => {
+  try {
+    const userChanges = await UserChanges.findOne({});
+
+    console.log("userschangesToSkip -", userChanges.count);
+
+    const result = await axios.post(
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-subgraph",
+      {
+        query: `
+        {
+          userChanges(orderBy:block,orderDirection:asc,skip:${userChanges.count}){
+            id
+            block
+            userAddress
+            user{
+              id
+              displayName
+              bio
+              image
+            }
+          }
+        }
+        
+      `,
+      }
+    );
+
+    console.log(result.data?.data?.userChanges);
+
+    if (result.data?.data?.userChanges?.length) {
+      const updatedUserData = result.data?.data?.userChanges.map((user) => {
+        return User.findOneAndUpdate(
+          { address: user.userAddress },
+          {
+            displayName: user.user.displayName,
+            bio: user.user.bio,
+            image: user.user.image,
+          }
+        );
+      });
+
+      await Promise.all(updatedUserData);
+      // console.log(updatedUserData[0]);
+      userChanges.count += result.data?.data?.userChanges?.length;
+      userChanges.save();
+      console.log("done user changes");
     }
   } catch (error) {
     console.log("rttpt", error);

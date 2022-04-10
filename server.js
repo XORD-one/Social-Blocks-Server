@@ -14,6 +14,9 @@ const Post = require("./models/post");
 const axios = require("axios");
 const User = require("./models/user");
 
+const PostChanges = require("./models/PostChages");
+const UserChanges = require("./models/UserChanges");
+
 // ! FOR TESTING ONLY
 require("./cronjob");
 
@@ -40,6 +43,28 @@ mongoose
   });
 
 app.get("/", async (req, res) => {
+  // let posts = await Post.find({});
+  // await posts[0].remove();
+  // await posts[1].remove();
+  // await posts[2].remove();
+  // await posts[3].remove();
+  // await posts[4].remove();
+  // await posts[5].remove();
+
+  // let user = await User.find({});
+  // await user[0].remove();
+  // await user[1].remove();
+  // await user[2].remove();
+  // await user[3].remove();
+  // await user[4].remove();
+  // await user[5].remove();
+  // await user[6].remove();
+  // let postChages = new PostChanges({ count: 0 });
+  // postChages.save();
+
+  // let userChages = new UserChanges({ count: 0 });
+  // userChages.save();
+
   res.send("server live!");
 });
 
