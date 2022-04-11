@@ -74,7 +74,12 @@ const unFollowUser = async (req, res) => {
 
 const getUserFollowers = async (req, res) => {
   try {
-    const user = await User.findOne({ address: req.params.address });
+    const user = await User.findOne({
+      address: req.params.address.toLowerCase(),
+    });
+
+    if (!user) throw 'no user found';
+
     const userFollowers = await User.find({ address: { $in: user.followers } });
 
     res.status(200).json({
@@ -88,7 +93,12 @@ const getUserFollowers = async (req, res) => {
 
 const getUserFollowing = async (req, res) => {
   try {
-    const user = await User.findOne({ address: req.params.address });
+    const user = await User.findOne({
+      address: req.params.address.toLowerCase(),
+    });
+
+    if (!user) throw 'no user found';
+
     const userFollowing = await User.find({ address: { $in: user.following } });
 
     res.status(200).json({

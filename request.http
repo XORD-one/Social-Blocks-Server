@@ -7,7 +7,7 @@ GET http://localhost:5000/posts/getUserPosts?address=0xbf95c8c31feda5585381e1f62
 
 ### 
 
-GET http://localhost:5000/users/getAllUsers
+GET https://socialblocks.herokuapp.com/users/getAllUsers
 
 ###
 
@@ -29,4 +29,4 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:5000/posts/getSinglePost/2
+GET http://localhost:5000/users/getFollowers/0x23e05938b4619035870836d22c4ef9988623c384
