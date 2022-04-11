@@ -50,6 +50,7 @@ app.get("/", async (req, res) => {
   // await posts[3].remove();
   // await posts[4].remove();
   // await posts[5].remove();
+  // await posts[6].remove();
 
   // let user = await User.find({});
   // await user[0].remove();
@@ -59,6 +60,9 @@ app.get("/", async (req, res) => {
   // await user[4].remove();
   // await user[5].remove();
   // await user[6].remove();
+  // await user[7].remove();
+  // await user[8].remove();
+  // await user[9].remove();
   // let postChages = new PostChanges({ count: 0 });
   // postChages.save();
 

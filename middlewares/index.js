@@ -23,6 +23,9 @@ module.exports = {
       //   req.body.signature,
       // );
 
+      console.log("aaa1", req.body.userAddress.toLowerCase());
+      console.log("aaa2", recoveredAddress.toLowerCase());
+
       if (
         req.body.userAddress.toLowerCase() !== recoveredAddress.toLowerCase()
       ) {

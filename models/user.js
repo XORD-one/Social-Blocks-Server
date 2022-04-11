@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const user = new Schema(
@@ -13,20 +13,20 @@ const user = new Schema(
     postsOwn: [{ id: String }],
     followers: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        type: String,
+        ref: "user",
       },
     ],
     following: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        type: String,
+        ref: "user",
       },
     ],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-const User = mongoose.model('user', user);
+const User = mongoose.model("user", user);
 
 module.exports = User;

@@ -22,11 +22,11 @@ const followUser = async (req, res) => {
   try {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
-      { $push: { following: req.body.userAddress } },
+      { $push: { following: req.body.followUser } },
       { new: true }
     );
-    const followerPromise = User.findByIdAndUpdate(
-      req.body.userId,
+    const followerPromise = User.findOneAndUpdate(
+      { address: req.body.followUser },
       { $push: { followers: req.user.address } },
       { new: true }
     );
@@ -49,11 +49,11 @@ const unFollowUser = async (req, res) => {
   try {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
-      { $pull: { following: req.body.userAddress } },
+      { $pull: { following: req.body.followUser } },
       { new: true }
     );
-    const followerPromise = User.findByIdAndUpdate(
-      req.body.userId,
+    const followerPromise = User.findOneAndUpdate(
+      { address: req.body.followUser },
       { $pull: { followers: req.user.address } },
       { new: true }
     );
