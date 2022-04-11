@@ -18,7 +18,7 @@ const PostChanges = require("./models/PostChages");
 const UserChanges = require("./models/UserChanges");
 
 // ! FOR TESTING ONLY
-require("./cronjob");
+// require("./cronjob");
 
 const host = "0.0.0.0";
 const port = process.env.PORT || 5000;
@@ -43,7 +43,7 @@ mongoose
   });
 
 app.get("/", async (req, res) => {
-  // let posts = await Post.find({});
+  // let posts = await User.find({});
   // await posts[0].remove();
   // await posts[1].remove();
   // await posts[2].remove();
@@ -51,20 +51,20 @@ app.get("/", async (req, res) => {
   // await posts[4].remove();
   // await posts[5].remove();
   // await posts[6].remove();
-
-  // let user = await User.find({});
-  // await user[0].remove();
-  // await user[1].remove();
-  // await user[2].remove();
-  // await user[3].remove();
-  // await user[4].remove();
-  // await user[5].remove();
-  // await user[6].remove();
-  // await user[7].remove();
-  // await user[8].remove();
-  // await user[9].remove();
-  // let postChages = new PostChanges({ count: 0 });
-  // postChages.save();
+  // await posts[7].remove();
+  // await posts[8].remove();
+  // await posts[9].remove();
+  // await posts[10].remove();
+  // await posts[11].remove();
+  // await posts[12].remove();
+  // await posts[13].remove();
+  // await posts[14].remove();
+  // await posts[15].remove();
+  // await posts[16].remove();
+  // await posts[17].remove();
+  // await posts[18].remove();
+  // await posts[19].remove();
+  // await posts[20].remove();
 
   // let userChages = new UserChanges({ count: 0 });
   // userChages.save();
