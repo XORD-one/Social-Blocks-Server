@@ -11,7 +11,7 @@ GET http://localhost:5000/users/getAllUsers
 
 ###
 
-GET https://rocky-peak-62606.herokuapp.com/users/getAllUsers
+GET https://calm-tor-92545.herokuapp.com/users/getAllUsers
 
 ###
 GET http://localhost:5000/users/details?address=0xbf95c8c31feda5585381e1f62313d68a65cab0ff

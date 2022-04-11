@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -23,12 +23,12 @@ const followUser = async (req, res) => {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
       { $push: { following: req.body.followUser } },
-      { new: true }
+      { new: true },
     );
     const followerPromise = User.findOneAndUpdate(
       { address: req.body.followUser },
       { $push: { followers: req.user.address } },
-      { new: true }
+      { new: true },
     );
 
     const [following, follower] = await Promise.all([
@@ -50,12 +50,12 @@ const unFollowUser = async (req, res) => {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
       { $pull: { following: req.body.followUser } },
-      { new: true }
+      { new: true },
     );
     const followerPromise = User.findOneAndUpdate(
       { address: req.body.followUser },
       { $pull: { followers: req.user.address } },
-      { new: true }
+      { new: true },
     );
 
     const [following, follower] = await Promise.all([
@@ -72,9 +72,39 @@ const unFollowUser = async (req, res) => {
   }
 };
 
+const getUserFollowers = async (req, res) => {
+  try {
+    const user = await User.findOne({ address: req.params.address });
+    const userFollowers = await User.find({ address: { $in: user.followers } });
+
+    res.status(200).json({
+      user,
+      data: userFollowers,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getUserFollowing = async (req, res) => {
+  try {
+    const user = await User.findOne({ address: req.params.address });
+    const userFollowing = await User.find({ address: { $in: user.following } });
+
+    res.status(200).json({
+      user,
+      data: userFollowing,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserDetails,
   followUser,
   unFollowUser,
+  getUserFollowers,
+  getUserFollowing,
 };

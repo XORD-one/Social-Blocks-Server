@@ -1,5 +1,5 @@
-const Likes = require("../models/likes");
-const Post = require("../models/post");
+const Likes = require('../models/likes');
+const Post = require('../models/post');
 
 // const URL = 'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks';
 
@@ -8,9 +8,9 @@ const getPosts = async (req, res) => {
     let result = await Post.find({}).lean();
     const checkLikes = await Likes.find({});
 
-    result = result.map((post) => {
+    result = result.map(post => {
       let likesArray = [];
-      checkLikes.map((like) => {
+      checkLikes.map(like => {
         if (parseInt(like.postId) === parseInt(post._id)) {
           likesArray = like.likesArray;
         }
@@ -29,23 +29,23 @@ const getPosts = async (req, res) => {
 const getUserPosts = async (req, res) => {
   try {
     const query =
-      req.query.type === "owner"
-        ? { "owner.id": req.query.address }
-        : req.query.type === "creator"
-        ? { "creator.id": req.query.address }
+      req.query.type === 'owner'
+        ? { 'owner.id': req.query.address }
+        : req.query.type === 'creator'
+        ? { 'creator.id': req.query.address }
         : {
             $or: [
-              { "creator.id": req.query.address },
-              { "owner.id": req.query.address },
+              { 'creator.id': req.query.address },
+              { 'owner.id': req.query.address },
             ],
           };
 
     let result = await Post.find(query).lean();
     const checkLikes = await Likes.find({});
 
-    result = result.map((post) => {
+    result = result.map(post => {
       let likesArray = [];
-      checkLikes.map((like) => {
+      checkLikes.map(like => {
         if (parseInt(like.postId) === parseInt(post._id)) {
           likesArray = like.likesArray;
         }
@@ -80,7 +80,7 @@ const getSinglePost = async (req, res) => {
 const removeAllPosts = async (req, res) => {
   try {
     await Post.deleteMany({});
-    res.status(200).json({ message: "All posts deleted" });
+    res.status(200).json({ message: 'All posts deleted' });
   } catch (err) {
     console.log(err);
   }
