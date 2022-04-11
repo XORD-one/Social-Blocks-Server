@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require("../models/user");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -22,13 +22,40 @@ const followUser = async (req, res) => {
   try {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
-      { $push: { following: req.body.userId } },
-      { new: true },
+      { $push: { following: req.body.userAddress } },
+      { new: true }
     );
     const followerPromise = User.findByIdAndUpdate(
       req.body.userId,
-      { $push: { followers: req.user._id } },
-      { new: true },
+      { $push: { followers: req.user.address } },
+      { new: true }
+    );
+
+    const [following, follower] = await Promise.all([
+      followingPromise,
+      followerPromise,
+    ]);
+
+    res.status(200).json({
+      following,
+      follower,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const unFollowUser = async (req, res) => {
+  try {
+    const followingPromise = User.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { following: req.body.userAddress } },
+      { new: true }
+    );
+    const followerPromise = User.findByIdAndUpdate(
+      req.body.userId,
+      { $pull: { followers: req.user.address } },
+      { new: true }
     );
 
     const [following, follower] = await Promise.all([
@@ -49,4 +76,5 @@ module.exports = {
   getAllUsers,
   getUserDetails,
   followUser,
+  unFollowUser,
 };
