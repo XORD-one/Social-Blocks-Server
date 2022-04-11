@@ -12,7 +12,9 @@ const getPosts = async (req, res) => {
     let result;
     if (user) {
       result = await Post.find({
-        "owner.address": { $in: user.following },
+        "owner.address": {
+          $in: [...user.following, req.params.address.toLowerCase()],
+        },
       }).lean();
     } else {
       result = await Post.find({}).lean();
