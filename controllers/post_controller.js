@@ -1,11 +1,23 @@
 const Likes = require("../models/likes");
 const Post = require("../models/post");
+const User = require("../models/user");
 
 // const URL = 'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks';
 
 const getPosts = async (req, res) => {
   try {
-    let result = await Post.find({}).lean();
+    const user = await User.findOne({
+      address: req.params.address.toLowerCase(),
+    });
+    let result;
+    if (user) {
+      result = await Post.find({
+        "owner.address": { $in: user.following },
+      }).lean();
+    } else {
+      result = await Post.find({}).lean();
+    }
+
     const checkLikes = await Likes.find({});
 
     result = result.map((post) => {
@@ -17,8 +29,6 @@ const getPosts = async (req, res) => {
       });
       return { ...post, likesArray };
     });
-
-    console.log(result);
 
     res.status(200).json(result);
   } catch (err) {
