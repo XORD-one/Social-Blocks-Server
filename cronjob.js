@@ -112,14 +112,12 @@ schedule.scheduleJob(thirtySeconds, async () => {
   try {
     const postChanges = await PostChanges.findOne({});
 
-    console.log('postchangesToSkip -', postChanges.count);
-
     const result = await axios.post(
       'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-subgraph',
       {
         query: `
           { 
-            changes() {
+            changes(skip: ${postChanges.count}) {
               id
               block
               postId
@@ -127,9 +125,19 @@ schedule.scheduleJob(thirtySeconds, async () => {
                 id
                 creator {
                   id
+                  address
+                  userName
+                  displayName
+                  bio
+                  image
                 }
                 owner {
                   id
+                  address
+                  userName
+                  displayName
+                  bio
+                  image
                 }
                 uri
                 buyStatus
@@ -142,21 +150,23 @@ schedule.scheduleJob(thirtySeconds, async () => {
       },
     );
 
-    if (result.data?.data?.posts?.length) {
-      const updatedPostData = result.data?.data?.posts.map(post => {
+    console.log('result.data?.data?.posts ==', result?.data?.data?.changes);
+
+    if (result.data?.data?.changes?.length) {
+      const updatedPostData = result.data?.data?.changes.map(post => {
         return Post.findOneAndUpdate(
-          { _id: String(parseInt(post.postId)) },
+          { _id: String(parseInt(post.post.id)) },
           {
-            sellValue: Number(post.sellValue),
-            owner: post.owner.id,
-            transferHistory: post.transferHistory,
-            buyStatus: post.buyStatus,
+            sellValue: Number(post.post.sellValue),
+            owner: post.post.owner,
+            transferHistory: post.post.transferHistory,
+            buyStatus: post.post.buyStatus,
           },
         );
       });
 
       await Promise.all(updatedPostData);
-      postChanges.count += result.data?.data?.posts?.length;
+      postChanges.count += result?.data?.data?.changes?.length;
       postChanges.save();
       console.log('done');
     }
@@ -239,7 +249,7 @@ schedule.scheduleJob(thirtySeconds, async () => {
             }
           }
         }
-        
+
       `,
       },
     );

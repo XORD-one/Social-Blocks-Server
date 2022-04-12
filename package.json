@@ -16,7 +16,7 @@
     "mongoose": "^6.2.9",
     "node-schedule": "^2.1.0",
     "nodemon": "^2.0.15",
-    "web3": "^1.7.1"
+    "web3": "^1.7.3"
   },
   "author": "",
   "license": "ISC",
