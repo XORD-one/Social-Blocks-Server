@@ -117,7 +117,7 @@ schedule.scheduleJob(thirtySeconds, async () => {
       {
         query: `
           { 
-            changes(skip: ${postChanges.count}) {
+            changes(orderBy: block, orderDirection: asc, skip: ${postChanges.count}) {
               id
               block
               postId
