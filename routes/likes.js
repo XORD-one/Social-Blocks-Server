@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.post('/setlikes', verifySignature, LikesController.setLike);
 router.post('/getlikes', LikesController.getLikes);
-
 router.post('/getLikesHash', verifySignature, (req, res) => {
   const data = createSignature(req.body.likes);
 
