@@ -1,15 +1,9 @@
-<<<<<<< Updated upstream
-const Likes = require('../models/likes');
-const Post = require('../models/post');
-const User = require('../models/user');
-=======
 const Likes = require("../models/likes");
 const Post = require("../models/post");
 const User = require("../models/user");
 const Comment = require("../models/Comment");
 const axios = require("axios");
 const { json } = require("body-parser");
->>>>>>> Stashed changes
 
 // const URL = 'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks';
 
@@ -23,12 +17,12 @@ const getPosts = async (req, res) => {
       result = await Post.find({
         $or: [
           {
-            'owner.address': {
+            "owner.address": {
               $in: [...user.following, req.params.address.toLowerCase()],
             },
           },
           {
-            'creator.address': {
+            "creator.address": {
               $in: [...user.following, req.params.address.toLowerCase()],
             },
           },
@@ -40,9 +34,9 @@ const getPosts = async (req, res) => {
 
     const checkLikes = await Likes.find({});
 
-    result = result.map(post => {
+    result = result.map((post) => {
       let likesArray = [];
-      checkLikes.map(like => {
+      checkLikes.map((like) => {
         if (parseInt(like.postId) === parseInt(post._id)) {
           likesArray = like.likesArray;
         }
@@ -59,23 +53,23 @@ const getPosts = async (req, res) => {
 const getUserPosts = async (req, res) => {
   try {
     const query =
-      req.query.type === 'owner'
-        ? { 'owner.id': req.query.address }
-        : req.query.type === 'creator'
-        ? { 'creator.id': req.query.address }
+      req.query.type === "owner"
+        ? { "owner.id": req.query.address }
+        : req.query.type === "creator"
+        ? { "creator.id": req.query.address }
         : {
             $or: [
-              { 'creator.id': req.query.address },
-              { 'owner.id': req.query.address },
+              { "creator.id": req.query.address },
+              { "owner.id": req.query.address },
             ],
           };
 
     let result = await Post.find(query).lean();
     const checkLikes = await Likes.find({});
 
-    result = result.map(post => {
+    result = result.map((post) => {
       let likesArray = [];
-      checkLikes.map(like => {
+      checkLikes.map((like) => {
         if (parseInt(like.postId) === parseInt(post._id)) {
           likesArray = like.likesArray;
         }
@@ -108,15 +102,11 @@ const getSinglePost = async (req, res) => {
 const removeAllPostsAndUsers = async (req, res) => {
   try {
     await Post.deleteMany({});
-<<<<<<< Updated upstream
-    res.status(200).json({ message: 'All posts deleted' });
-=======
     await User.deleteMany({});
     await Likes.deleteMany({});
     await Comment.deleteMany({});
 
     res.status(200).json({ message: "All posts deleted" });
->>>>>>> Stashed changes
   } catch (err) {
     console.log(err);
   }
