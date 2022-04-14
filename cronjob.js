@@ -5,7 +5,7 @@ const User = require('./models/user');
 const PostChanges = require('./models/PostChages');
 const UserChanges = require('./models/UserChanges');
 
-const thirtySeconds = '*/30 * * * * *';
+const thirtySeconds = '*/15 * * * * *';
 
 function isValidUrl(string) {
   let url;
