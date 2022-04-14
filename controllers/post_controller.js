@@ -120,7 +120,7 @@ const getTransferHistory = async (req, res) => {
     {
       query: `
       {
-        posts(where:{id:"0x${id}"}){
+        posts(where:{id:"${id}"}){
           transferHistory
         }
       }
