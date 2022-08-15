@@ -8,7 +8,7 @@ router.get('/details', user_controller.getUserDetails);
 router.post('/follow', verifySignature, user_controller.followUser);
 router.post('/unfollow', verifySignature, user_controller.unFollowUser);
 router.get('/getFollowers/:address', user_controller.getUserFollowers);
-router.get('/getFollowing/:address', user_controller.getUserFollowing);
+router.get('/getRisingCreators', user_controller.getRisingCreators);
 
 module.exports = {
   router: router,

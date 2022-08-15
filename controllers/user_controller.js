@@ -1,4 +1,28 @@
 const User = require('../models/user');
+const Like = require('../models/likes');
+
+const getRisingCreators = async (_, res) => {
+  try {
+    const likes = (await Like.find({}))
+      .sort((a, b) => Number(b.likesArray.length) - Number(a.likesArray.length))
+      .slice(0, 4);
+
+    console.log(
+      'likse- ',
+      likes,
+      likes.map(like => like.postId),
+    );
+
+    const users = await User.find({
+      'postsOwn.id': { $in: likes.map(like => like.postId) },
+    });
+
+    return res.status(200).json(users);
+  } catch (err) {
+    console.log('err in new rp', err);
+    res.status(500).json(err);
+  }
+};
 
 const getAllUsers = async (_, res) => {
   try {
@@ -117,4 +141,5 @@ module.exports = {
   unFollowUser,
   getUserFollowers,
   getUserFollowing,
+  getRisingCreators,
 };
