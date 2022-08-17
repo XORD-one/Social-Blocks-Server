@@ -23,8 +23,8 @@ const getRisingCreators = async (_, res) => {
 
 const followUser = async (req, res) => {
   try {
-    let user = User.findOne({ address: req.body.address });
-    let user1 = User.findOne({ address: req.body.followUser });
+    let user = await User.findOne({ address: req.body.address });
+    let user1 = await User.findOne({ address: req.body.followUser });
 
     console.log(user, user1);
 
