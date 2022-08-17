@@ -29,8 +29,8 @@ const followUser = async (req, res) => {
       { new: true }
     );
 
-    let user = User.findById(req.body.address);
-    let user1 = User.findById(req.body.followUser);
+    let user = User.findOne({ address: req.body.address });
+    let user1 = User.findOne({ address: req.body.followUser });
 
     if (!user) {
       user = new User(req.body.address, [], [req.body.followUser]);
