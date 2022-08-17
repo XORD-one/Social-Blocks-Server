@@ -23,12 +23,6 @@ const getRisingCreators = async (_, res) => {
 
 const followUser = async (req, res) => {
   try {
-    const followingPromise = User.findByIdAndUpdate(
-      req.user._id,
-      { $push: { following: req.body.followUser } },
-      { new: true }
-    );
-
     let user = User.findOne({ address: req.body.address });
     let user1 = User.findOne({ address: req.body.followUser });
 
