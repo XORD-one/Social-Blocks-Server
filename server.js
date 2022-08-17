@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const auth_route = require("./routes/auth");
 const likes_route = require("./routes/likes");
 const post_route = require("./routes/post");
 const user_route = require("./routes/user");
@@ -40,7 +39,6 @@ app.get("/", async (req, res) => {
   res.send("server live!");
 });
 
-app.use("/auth", auth_route.router);
 app.use("/likes", likes_route.router);
 app.use("/posts", post_route.router);
 app.use("/users", user_route.router);

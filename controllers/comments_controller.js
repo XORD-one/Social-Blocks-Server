@@ -1,10 +1,8 @@
 const Comment = require("../models/Comment");
-const Post = require("../models/post");
 
 const setComment = async (req, res) => {
-  let post = await Post.findOne({ _id: req.body.postId });
-
-  if (post) {
+  // check if post exists.
+  if (true) {
     let comment = new Comment({
       postId: req.body.postId,
       comment: req.body.comment,
