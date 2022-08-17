@@ -102,11 +102,15 @@ const getUserFollowers = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
-    if (!user) throw "no user found";
-
-    res.status(200).json({
-      data: user.following,
-    });
+    if (!user) {
+      res.status(200).json({
+        data: [],
+      });
+    } else {
+      res.status(200).json({
+        data: user.following,
+      });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -118,11 +122,15 @@ const getUserFollowing = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
-    if (!user) throw "no user found";
-
-    res.status(200).json({
-      data: user.following,
-    });
+    if (!user) {
+      res.status(200).json({
+        data: [],
+      });
+    } else {
+      res.status(200).json({
+        data: user.following,
+      });
+    }
   } catch (error) {
     console.log(error);
   }
