@@ -1,5 +1,5 @@
-const User = require('../models/user');
-const Like = require('../models/likes');
+const User = require("../models/user");
+const Like = require("../models/likes");
 
 const getRisingCreators = async (_, res) => {
   try {
@@ -8,18 +8,18 @@ const getRisingCreators = async (_, res) => {
       .slice(0, 4);
 
     console.log(
-      'likse- ',
+      "likse- ",
       likes,
-      likes.map(like => like.postId),
+      likes.map((like) => like.postId)
     );
 
     const users = await User.find({
-      'postsOwn.id': { $in: likes.map(like => like.postId) },
+      "postsOwn.id": { $in: likes.map((like) => like.postId) },
     });
 
     return res.status(200).json(users);
   } catch (err) {
-    console.log('err in new rp', err);
+    console.log("err in new rp", err);
     res.status(500).json(err);
   }
 };
@@ -47,12 +47,12 @@ const followUser = async (req, res) => {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
       { $push: { following: req.body.followUser } },
-      { new: true },
+      { new: true }
     );
     const followerPromise = User.findOneAndUpdate(
       { address: req.body.followUser },
       { $push: { followers: req.user.address } },
-      { new: true },
+      { new: true }
     );
 
     const [following, follower] = await Promise.all([
@@ -74,12 +74,12 @@ const unFollowUser = async (req, res) => {
     const followingPromise = User.findByIdAndUpdate(
       req.user._id,
       { $pull: { following: req.body.followUser } },
-      { new: true },
+      { new: true }
     );
     const followerPromise = User.findOneAndUpdate(
       { address: req.body.followUser },
       { $pull: { followers: req.user.address } },
-      { new: true },
+      { new: true }
     );
 
     const [following, follower] = await Promise.all([
@@ -102,13 +102,11 @@ const getUserFollowers = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
-    if (!user) throw 'no user found';
-
-    const userFollowers = await User.find({ address: { $in: user.followers } });
+    if (!user) throw "no user found";
 
     res.status(200).json({
       user,
-      data: userFollowers,
+      data: user.following,
     });
   } catch (error) {
     console.log(error);
@@ -121,13 +119,11 @@ const getUserFollowing = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
-    if (!user) throw 'no user found';
-
-    const userFollowing = await User.find({ address: { $in: user.following } });
+    if (!user) throw "no user found";
 
     res.status(200).json({
       user,
-      data: userFollowing,
+      data: user.following,
     });
   } catch (error) {
     console.log(error);
