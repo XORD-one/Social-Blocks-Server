@@ -26,20 +26,28 @@ const followUser = async (req, res) => {
     let user = await User.findOne({ address: req.body.address });
     let user1 = await User.findOne({ address: req.body.followUser });
 
-    console.log(user, user1);
-
     if (!user) {
-      user = new User(req.body.address, [], [req.body.followUser]);
+      user = new User({
+        address: req.body.address,
+        followers: [],
+        following: [req.body.followUser],
+      });
+      await user.save();
     } else {
-      user.following = user.following.push(req.body.followUser);
-      user.save();
+      user.following.push(req.body.followUser);
+      await user.save();
     }
 
     if (!user1) {
-      user1 = new User(req.body.address, [req.body.address], []);
+      user1 = new User({
+        address: req.body.followUser,
+        followers: [req.body.address],
+        following: [],
+      });
+      await user1.save();
     } else {
-      user1.followers = user.followers.push(req.body.address);
-      user1.save();
+      user1.followers.push(req.body.address);
+      await user1.save();
     }
 
     res.status(200).json({
@@ -84,13 +92,15 @@ const getUserFollowers = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
+    console.log(user);
+
     if (!user) {
       res.status(200).json({
         data: [],
       });
     } else {
       res.status(200).json({
-        data: user.following,
+        data: user.followers,
       });
     }
   } catch (error) {

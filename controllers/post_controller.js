@@ -5,11 +5,11 @@ const getTransferHistory = async (req, res) => {
   let id = req.params.id;
 
   const result = await axios.post(
-    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/social-blocks-subgraph",
+    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
     {
       query: `
       {
-        posts(where:{id:"${id}"}){
+        post(id:"${id}"){
           transferHistory
         }
       }
@@ -17,28 +17,49 @@ const getTransferHistory = async (req, res) => {
     }
   );
 
-  let transferArr = result?.data?.data?.posts[0]?.transferHistory;
+  let transferArr = result?.data?.data?.post?.transferHistory;
 
-  if (transferArr) {
-    let users = await User.find({
-      address: {
-        $in: transferArr,
-      },
-    });
-    let usersInOrder = [];
+  let addressesString = "";
 
-    if (users) {
-      users.forEach((user) => {
-        usersInOrder[transferArr.indexOf(user.address.toLowerCase())] = user;
-      });
+  transferArr.forEach((e) => {
+    addressesString += '"' + e.toString() + '",';
+  });
+
+  const result1 = await axios.post(
+    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
+    {
+      query: `
+      {
+        users(where:{id_in:[${addressesString}]}){
+          id
+          address
+          userName
+          displayName
+          bio
+          image
+          rewardClaimed
+          createdAt
+        }
+      }
+    `,
     }
+  );
 
-    res.json({
-      usersInOrder,
-    });
-  } else {
-    res.json({ message: "post not found." });
-  }
+  let users = result1?.data.data.users;
+  let finalUsers = [];
+
+  transferArr?.forEach((e) => {
+    for (let i = 0; i < transferArr.length; i++) {
+      if (e.toLowerCase() == users[i].id.toLowerCase()) {
+        finalUsers.push(users[i]);
+        break;
+      }
+    }
+  });
+
+  res.json({
+    usersInOrder: finalUsers,
+  });
 };
 
 module.exports = {

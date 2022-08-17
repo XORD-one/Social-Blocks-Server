@@ -4,16 +4,8 @@ const Schema = mongoose.Schema;
 const user = new Schema(
   {
     address: String,
-    followers: [
-      {
-        type: String,
-      },
-    ],
-    following: [
-      {
-        type: String,
-      },
-    ],
+    followers: [],
+    following: [],
   },
   { timestamps: true }
 );
