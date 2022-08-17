@@ -10,11 +10,14 @@ const post_route = require("./routes/post");
 const user_route = require("./routes/user");
 const comment_route = require("./routes/comment");
 
+const cors = require("cors");
+
 dotenv.config();
 
 const host = "0.0.0.0";
 const port = process.env.PORT || 5001;
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("uploads"));
