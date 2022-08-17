@@ -26,6 +26,8 @@ const followUser = async (req, res) => {
     let user = User.findOne({ address: req.body.address });
     let user1 = User.findOne({ address: req.body.followUser });
 
+    console.log(user, user1);
+
     if (!user) {
       user = new User(req.body.address, [], [req.body.followUser]);
     } else {
