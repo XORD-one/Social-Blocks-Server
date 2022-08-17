@@ -105,7 +105,6 @@ const getUserFollowers = async (req, res) => {
     if (!user) throw "no user found";
 
     res.status(200).json({
-      user,
       data: user.following,
     });
   } catch (error) {
@@ -122,7 +121,6 @@ const getUserFollowing = async (req, res) => {
     if (!user) throw "no user found";
 
     res.status(200).json({
-      user,
       data: user.following,
     });
   } catch (error) {
