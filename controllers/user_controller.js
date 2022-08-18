@@ -1,6 +1,6 @@
-const User = require('../models/user');
-const Like = require('../models/likes');
-const axios = require('axios');
+const User = require("../models/user");
+const Like = require("../models/likes");
+const axios = require("axios");
 
 const getRisingCreators = async (_, res) => {
   try {
@@ -8,18 +8,18 @@ const getRisingCreators = async (_, res) => {
       .sort((a, b) => Number(b.likesArray.length) - Number(a.likesArray.length))
       .slice(0, 10);
 
-    let posts = likes.map(like => {
+    let posts = likes.map((like) => {
       return like.postId;
     });
 
-    let addressesString = '';
+    let addressesString = "";
 
-    posts.forEach(e => {
+    posts.forEach((e) => {
       addressesString += '"' + e + '",';
     });
 
     const result = await axios.post(
-      'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph',
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
       {
         query: `
         {
@@ -38,10 +38,10 @@ const getRisingCreators = async (_, res) => {
           }
         }
       `,
-      },
+      }
     );
 
-    let users = result?.data?.data?.posts?.map(e => {
+    let users = result?.data?.data?.posts?.map((e) => {
       return e.creator;
     });
 
@@ -50,7 +50,7 @@ const getRisingCreators = async (_, res) => {
     for (let user of users) {
       if (distinctUsers.length === 4) break;
 
-      const found = distinctUsers.findIndex(u => u.address === user.address);
+      const found = distinctUsers.findIndex((u) => u.address === user.address);
 
       if (found === -1) {
         distinctUsers.push(user);
@@ -59,7 +59,7 @@ const getRisingCreators = async (_, res) => {
 
     return res.status(200).json(distinctUsers);
   } catch (err) {
-    console.log('err in new rp', err);
+    console.log("err in new rp", err);
     res.status(500).json(err);
   }
 };
@@ -104,15 +104,13 @@ const followUser = async (req, res) => {
 
 const unFollowUser = async (req, res) => {
   try {
-    const followingPromise = User.findByIdAndUpdate(
-      req.user._id,
-      { $pull: { following: req.body.followUser } },
-      { new: true },
+    const followingPromise = User.findOneAndUpdate(
+      { address: req.body.address },
+      { $pull: { following: req.body.followUser } }
     );
     const followerPromise = User.findOneAndUpdate(
       { address: req.body.followUser },
-      { $pull: { followers: req.user.address } },
-      { new: true },
+      { $pull: { followers: req.body.address } }
     );
 
     const [following, follower] = await Promise.all([
