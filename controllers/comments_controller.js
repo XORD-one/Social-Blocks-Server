@@ -27,7 +27,6 @@ const getComments = async (req, res) => {
   let comments = await Comment.find({
     postId: req.params.id,
   });
-  console.log(comments);
   if (comments) {
     res.json({
       comments: comments,

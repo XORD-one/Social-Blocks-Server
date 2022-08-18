@@ -12,14 +12,10 @@ module.exports = {
       const time = Math.floor(Math.floor(Date.now() / 1000) / timeConstant);
       const hash = keccak(time.toString()).toString("hex");
 
-      console.log(req.body.signature);
-
       const recoveredAddress = web3.eth.accounts.recover(
         hash,
         req.body.signature
       );
-
-      console.log(recoveredAddress);
 
       if (
         req.body.userAddress.toLowerCase() !== recoveredAddress.toLowerCase()

@@ -1,24 +1,55 @@
 const User = require("../models/user");
 const Like = require("../models/likes");
+const axios = require("axios");
 
 const getRisingCreators = async (_, res) => {
-  // try {
-  //   const likes = (await Like.find({}))
-  //     .sort((a, b) => Number(b.likesArray.length) - Number(a.likesArray.length))
-  //     .slice(0, 4);
-  //   console.log(
-  //     "likse- ",
-  //     likes,
-  //     likes.map((like) => like.postId)
-  //   );
-  //   const users = await User.find({
-  //     "postsOwn.id": { $in: likes.map((like) => like.postId) },
-  //   });
-  //   return res.status(200).json(users);
-  // } catch (err) {
-  //   console.log("err in new rp", err);
-  //   res.status(500).json(err);
-  // }
+  try {
+    const likes = (await Like.find({}))
+      .sort((a, b) => Number(b.likesArray.length) - Number(a.likesArray.length))
+      .slice(0, 4);
+
+    let posts = likes.map((like) => {
+      return like.postId;
+    });
+
+    let addressesString = "";
+
+    posts.forEach((e) => {
+      addressesString += '"' + e + '",';
+    });
+
+    const result = await axios.post(
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
+      {
+        query: `
+        {
+          posts(where:{id_in:[${addressesString}]}){
+            id
+            creator{
+              id
+              address
+              userName
+              displayName
+              bio
+              image
+              rewardClaimed
+              createdAt
+            }
+          }
+        }
+      `,
+      }
+    );
+
+    let users = result?.data?.data?.posts?.map((e) => {
+      return e.creator;
+    });
+
+    return res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(err);
+  }
 };
 
 const followUser = async (req, res) => {
@@ -91,8 +122,6 @@ const getUserFollowers = async (req, res) => {
     const user = await User.findOne({
       address: req.params.address.toLowerCase(),
     });
-
-    console.log(user);
 
     if (!user) {
       res.status(200).json({
