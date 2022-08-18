@@ -1,4 +1,4 @@
-const Likes = require('../models/likes');
+const Likes = require("../models/likes");
 
 const setLike = async (req, res) => {
   let checkLike = await Likes.findOne({
@@ -8,7 +8,6 @@ const setLike = async (req, res) => {
     let likesArray = checkLike.likesArray;
     let index = likesArray.indexOf(req.body.userAddress);
     if (index > -1) {
-      // res.json({ error: "You already liked this post" });
       res.json({
         likesArray,
       });

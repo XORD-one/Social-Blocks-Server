@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Like = require('../models/likes');
+const axios = require('axios');
 
 const getRisingCreators = async (_, res) => {
   try {
@@ -7,14 +8,41 @@ const getRisingCreators = async (_, res) => {
       .sort((a, b) => Number(b.likesArray.length) - Number(a.likesArray.length))
       .slice(0, 10);
 
-    console.log(
-      'likse- ',
-      likes,
-      likes.map(like => like.postId),
+    let posts = likes.map(like => {
+      return like.postId;
+    });
+
+    let addressesString = '';
+
+    posts.forEach(e => {
+      addressesString += '"' + e + '",';
+    });
+
+    const result = await axios.post(
+      'https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph',
+      {
+        query: `
+        {
+          posts(where:{id_in:[${addressesString}]}){
+            id
+            creator{
+              id
+              address
+              userName
+              displayName
+              bio
+              image
+              rewardClaimed
+              createdAt
+            }
+          }
+        }
+      `,
+      },
     );
 
-    const users = await User.find({
-      'postsOwn.id': { $in: likes.map(like => like.postId) },
+    let users = result?.data?.data?.posts?.map(e => {
+      return e.creator;
     });
 
     console.log('##### users =', users);
@@ -36,45 +64,38 @@ const getRisingCreators = async (_, res) => {
   }
 };
 
-const getAllUsers = async (_, res) => {
-  try {
-    const result = await User.find({});
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const getUserDetails = async (req, res) => {
-  try {
-    const result = await User.findOne({ address: req.query.address });
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 const followUser = async (req, res) => {
   try {
-    const followingPromise = User.findByIdAndUpdate(
-      req.user._id,
-      { $push: { following: req.body.followUser } },
-      { new: true },
-    );
-    const followerPromise = User.findOneAndUpdate(
-      { address: req.body.followUser },
-      { $push: { followers: req.user.address } },
-      { new: true },
-    );
+    let user = await User.findOne({ address: req.body.address });
+    let user1 = await User.findOne({ address: req.body.followUser });
 
-    const [following, follower] = await Promise.all([
-      followingPromise,
-      followerPromise,
-    ]);
+    if (!user) {
+      user = new User({
+        address: req.body.address,
+        followers: [],
+        following: [req.body.followUser],
+      });
+      await user.save();
+    } else {
+      user.following.push(req.body.followUser);
+      await user.save();
+    }
+
+    if (!user1) {
+      user1 = new User({
+        address: req.body.followUser,
+        followers: [req.body.address],
+        following: [],
+      });
+      await user1.save();
+    } else {
+      user1.followers.push(req.body.address);
+      await user1.save();
+    }
 
     res.status(200).json({
-      following,
-      follower,
+      user,
+      user1,
     });
   } catch (error) {
     console.log(error);
@@ -114,14 +135,15 @@ const getUserFollowers = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
-    if (!user) throw 'no user found';
-
-    const userFollowers = await User.find({ address: { $in: user.followers } });
-
-    res.status(200).json({
-      user,
-      data: userFollowers,
-    });
+    if (!user) {
+      res.status(200).json({
+        data: [],
+      });
+    } else {
+      res.status(200).json({
+        data: user.followers,
+      });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -133,22 +155,21 @@ const getUserFollowing = async (req, res) => {
       address: req.params.address.toLowerCase(),
     });
 
-    if (!user) throw 'no user found';
-
-    const userFollowing = await User.find({ address: { $in: user.following } });
-
-    res.status(200).json({
-      user,
-      data: userFollowing,
-    });
+    if (!user) {
+      res.status(200).json({
+        data: [],
+      });
+    } else {
+      res.status(200).json({
+        data: user.following,
+      });
+    }
   } catch (error) {
     console.log(error);
   }
 };
 
 module.exports = {
-  getAllUsers,
-  getUserDetails,
   followUser,
   unFollowUser,
   getUserFollowers,
