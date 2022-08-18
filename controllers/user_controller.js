@@ -5,7 +5,7 @@ const getRisingCreators = async (_, res) => {
   try {
     const likes = (await Like.find({}))
       .sort((a, b) => Number(b.likesArray.length) - Number(a.likesArray.length))
-      .slice(0, 4);
+      .slice(0, 10);
 
     console.log(
       'likse- ',
@@ -17,7 +17,19 @@ const getRisingCreators = async (_, res) => {
       'postsOwn.id': { $in: likes.map(like => like.postId) },
     });
 
-    return res.status(200).json(users);
+    console.log('##### users =', users);
+
+    const distinctUsers = [];
+
+    for (let user in users) {
+      const found = distinctUsers.findIndex(u => u.address === user.address);
+
+      if (!found) {
+        distinctUsers.push(user);
+      }
+    }
+
+    return res.status(200).json(distinctUsers);
   } catch (err) {
     console.log('err in new rp', err);
     res.status(500).json(err);
