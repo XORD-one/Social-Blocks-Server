@@ -45,14 +45,14 @@ const getRisingCreators = async (_, res) => {
       return e.creator;
     });
 
-    console.log('##### users =', users);
-
     const distinctUsers = [];
 
-    for (let user in users) {
+    for (let user of users) {
+      if (distinctUsers.length === 4) break;
+
       const found = distinctUsers.findIndex(u => u.address === user.address);
 
-      if (!found) {
+      if (found === -1) {
         distinctUsers.push(user);
       }
     }
