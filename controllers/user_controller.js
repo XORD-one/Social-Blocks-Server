@@ -19,7 +19,7 @@ const getRisingCreators = async (_, res) => {
     });
 
     const result = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
+      "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraphone",
       {
         query: `
         {
