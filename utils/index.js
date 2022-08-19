@@ -4,6 +4,7 @@ const Likes = require("../models/likes");
 const axios = require("axios");
 
 const web3 = new Web3("https://rpc-mumbai.maticvigil.com/");
+const { abi } = require("ethereumjs-abi");
 
 const ABI = [
   {
@@ -896,13 +897,9 @@ module.exports = {
 
     const claimId = await contract.methods._claimId().call();
 
-    let message = Number(1).toString(16).padStart(64, 0);
-    message += owner.slice(2, 42);
-    message += claimId.toString(16).padStart(64, 0);
-
-    console.log(message);
-
-    let hash = web3.utils.keccak256(message);
+    let hash = abi
+      .soliditySHA3(["uint256", "address", "uint256"], ["1", owner, "1"])
+      .toString("hex");
 
     console.log(hash);
 
