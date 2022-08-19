@@ -11,6 +11,9 @@ const like = new Schema(
       type: Array,
       required: true,
     },
+    claimedlikesCount: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
