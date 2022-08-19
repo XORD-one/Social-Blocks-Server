@@ -868,7 +868,9 @@ module.exports = {
 
     if (post) {
       likesCount = post.likesArray.length;
-      claimedlikesCount = post.claimedlikesCount;
+      if (post.claimedlikesCount) {
+        claimedlikesCount = post.claimedlikesCount;
+      }
     }
 
     let claimableLikes = likesCount - claimedlikesCount;
@@ -897,9 +899,11 @@ module.exports = {
 
     const claimId = await contract.methods._claimId().call();
 
-    let message = "0x" + Number(1).toString(16).padStart(64, 0);
+    console.log(claimableLikes, claimId);
+
+    let message = "0x" + claimableLikes.toString(16).padStart(64, 0);
     message += owner.slice(2, 42);
-    message += Number(0).toString(16).padStart(64, 0);
+    message += claimId.toString(16).padStart(64, 0);
 
     let hash = web3.utils.keccak256(message);
 
