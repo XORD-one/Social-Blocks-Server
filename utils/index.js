@@ -896,11 +896,15 @@ module.exports = {
 
     const claimId = await contract.methods._claimId().call();
 
-    let message = claimableLikes.toString(16).padStart(64, 0);
+    let message = Number(1).toString(16).padStart(64, 0);
     message += owner.slice(2, 42);
     message += claimId.toString(16).padStart(64, 0);
 
+    console.log(message);
+
     let hash = web3.utils.keccak256(message);
+
+    console.log(hash);
 
     const signature = web3.eth.accounts.sign(
       hash,
