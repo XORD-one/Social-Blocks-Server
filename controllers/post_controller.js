@@ -5,7 +5,7 @@ const getTransferHistory = async (req, res) => {
   let id = req.params.id;
 
   const result = await axios.post(
-    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
+    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraphone",
     {
       query: `
       {
@@ -26,7 +26,7 @@ const getTransferHistory = async (req, res) => {
   });
 
   const result1 = await axios.post(
-    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraph",
+    "https://api.thegraph.com/subgraphs/name/ijlal-ishaq/socialblocksgraphone",
     {
       query: `
       {
