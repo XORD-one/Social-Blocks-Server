@@ -39,15 +39,3 @@ Social-Blocks-Server/
    ```bash
    npm install
    ```
-
-## Usage
-1. Start the server:
-   ```bash
-   npm start
-   ```
-2. The server will be running on `http://localhost:3000`.
-
-## Contributors
-- [Jilal-Ishaq](https://github.com/jilal-ishaq)
-- [Develed](https://github.com/develed)
-
